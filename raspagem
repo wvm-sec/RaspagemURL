@@ -1,0 +1,55 @@
+import re
+import requests
+import time
+
+def extrair_informacoes(url, regex_patterns):
+    try:
+        # Faz a requisição HTTP para a URL
+        response = requests.get(url)
+        content = response.text
+
+        # Analisa o conteúdo HTML usando BeautifulSoup
+        # (Isso pode ser útil se as páginas tiverem HTML complexo)
+        # soup = BeautifulSoup(content, 'html.parser')
+
+        # Extrai informações com base nas expressões regulares
+        results = {}
+        for pattern_name, pattern in regex_patterns.items():
+            matches = re.findall(pattern, content)
+            results[pattern_name] = matches
+
+        # Exibe as informações extraídas
+        print(f"\nURL: {url}")
+        for pattern_name, matches in results.items():
+            print(f"{pattern_name}: {matches}")
+
+    except Exception as e:
+        print(f"Erro ao acessar a URL {url}: {e}")
+
+# Lista de expressões regulares que você deseja testar
+expressoes_regulares = {
+   'Título': r'(?<=<h1 class="content-head__title" itemprop="headline">).+(?=<\/h1>)',  
+   'Subtítulo': r'(?<=<h2 class=\"content-head__subtitle\" itemprop=\"alternativeHeadline\">).+(?=</h2>)',
+   'Data': r'(?<=<time itemprop=\"datePublished\" datetime=\")\d{4}-\d{2}-\d{2}',
+    # Adicione mais expressões regulares conforme necessário
+}
+
+# Lista de URLs que você deseja testar
+urls = [
+    "https://g1.globo.com/pe/pernambuco/noticia/2023/03/08/abandonado-barco-que-monitorava-tubaroes-na-costa-de-pe-vira-abrigo-para-caes-e-deposito-de-entulhos.ghtml",
+"https://g1.globo.com/monitor-da-violencia/noticia/2023/03/08/brasil-bate-recorde-de-feminicidios-em-2022-com-uma-mulher-morta-a-cada-6-horas.ghtml",
+"https://g1.globo.com/politica/noticia/2023/03/08/janja-diz-ser-alvo-de-ataques-a-honra-e-critica-subrepresentacao-feminina-no-congresso.ghtml",
+"https://g1.globo.com/trabalho-e-carreira/noticia/2023/03/08/empresario-detido-em-operacao-em-vinicolas-do-rs-responde-por-empresa-que-foi-alvo-de-queixa-por-trabalho-escravo-em-2021.ghtml",
+"https://g1.globo.com/sp/santos-regiao/noticia/2023/03/08/stj-nega-pedido-para-apreensao-de-passaporte-do-ex-jogador-robinho.ghtml",
+"https://g1.globo.com/politica/noticia/2023/03/08/veja-12-vitorias-da-bancada-feminina-no-congresso-que-se-tornaram-lei-nas-ultimas-decadas.ghtml",
+"https://g1.globo.com/pe/petrolina-regiao/noticia/2023/03/08/aprovada-em-medicina-aos-49-anos-e-apos-12-tentativas-estudante-de-pe-aconselha-outras-mulheres-sonhem.ghtml",
+"https://g1.globo.com/rj/rio-de-janeiro/noticia/2023/03/08/menina-desaparece-em-sepetiba-na-zona-oeste-do-rio.ghtml",
+"https://g1.globo.com/economia/agronegocios/agro-de-gente-pra-gente/noticia/2023/03/08/limao-taiti-nao-e-limao-de-verdade-entenda-a-diferenca.ghtml",
+"https://g1.globo.com/politica/noticia/2023/03/07/camara-aprova-projeto-que-garante-a-mulher-a-presenca-de-acompanhante-em-procedimentos-de-saude-com-sedacao.ghtml",
+    # Adicione mais URLs conforme necessário
+]
+
+# Testa cada URL com cada expressão regular
+for url in urls:
+    extrair_informacoes(url, expressoes_regulares)
+    time.sleep(1)  # Aguardar 1 segundo antes da próxima requisição
